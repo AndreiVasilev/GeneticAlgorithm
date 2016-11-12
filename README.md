@@ -1,4 +1,4 @@
-# Phrase Generating Genetic Algorithm
+# Phrase Generation via Genetic Algorithm
 
 Hello, and welcome to my GitHub! This project is my first crack at object oriented programming. It is an implementation of a simple genetic algorithm that evolves a target phrase from complete randomness using the basic concepts of Darwinian evolution.  
 
