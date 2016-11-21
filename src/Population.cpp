@@ -77,12 +77,7 @@ void Population::NaturalSelection() {
 
 // Replaces vPopulation vector with contents of vOffspring vector
 void Population::ReplacePopulation() {
-    vPopulation.clear();
-
-    for(int i = 0; i <= iPopulationSize - 1; i++) {
-        vPopulation.push_back(vOffspring[i]);
-    }
-
+    vPopulation.swap(vOffspring);
     vOffspring.clear();
 }
 
