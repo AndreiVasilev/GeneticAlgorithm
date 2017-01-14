@@ -10,9 +10,12 @@
 // Initial Population constructor. Fills population object vector with new Phrase
 // objects. Number of Phrases generated is equal to the population size.
 Population::Population(std::string Target, int PopSize,  int MutationRate):
-    sTarget(Target), iPopulationSize(PopSize),
-    iMutationRate(MutationRate), iTargetLength(Target.size())
+        sTarget(Target), iPopulationSize(PopSize),
+        iMutationRate(MutationRate), iTargetLength(Target.size())
 {
+    vPopulation.reserve(iPopulationSize);
+    vOffspring.reserve(iPopulationSize);
+            
     for(int i = 1; i <= iPopulationSize; i++) {
         vPopulation.push_back(Phrase(iTargetLength));
     }
@@ -41,13 +44,12 @@ void Population::AssignFitness() {
 // a higher fitness scores will be chosen at proportionally higher rate.
 Phrase Population::GrabPhrase() {
     std::random_device rd;
-    std::mt19937 mt(rd());
     std::uniform_int_distribution<int> dist1(0, iPopulationSize-1);
     std::uniform_real_distribution<double> dist2(0.0, dHighestFitness);
 
     while(true) {
-        int rIndex = dist1(mt);
-        double rFitness = dist2(mt);
+        int rIndex = dist1(rd);
+        double rFitness = dist2(rd);
 
         Phrase Parent = vPopulation[rIndex];
         if (rFitness < Parent.dFitness)
@@ -88,4 +90,3 @@ bool Population::PerfectScore() {
     else
         return false;
 }
-
