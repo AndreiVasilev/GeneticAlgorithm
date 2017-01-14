@@ -47,8 +47,9 @@ void Phrase::SetFitness(std::string sTarget) {
     alternating fashion. Children Phrases will be the same length as the Parents.
 */
 Phrase Phrase::Procreate(Phrase ParentB) {
-    Phrase Child(iPhraseLength);
-    Child.vGenes.clear();
+    Phrase Child;
+    Child.iPhraseLength = iPhraseLength;
+    Child.vGenes.reserve(iPhraseLength);
 
     for(int index = 0; index < iPhraseLength; index++) {
         if(index == 0 || index % 2 == 0) {
