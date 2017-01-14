@@ -15,11 +15,11 @@ Phrase::Phrase(int targetLength):
         iPhraseLength(targetLength), dFitness(0.0)
 {
     std::random_device rd;
-    std::mt19937 mt(rd());
     std::uniform_int_distribution<int> cDist(32, 126);
 
+    vGenes.reserve(iPhraseLength);
     for(int i = 0; i < iPhraseLength; ++i) {
-        vGenes.push_back(static_cast<char>(cDist(mt)));
+        vGenes.push_back(static_cast<char>(cDist(rd)));
     }
 }
 
@@ -67,16 +67,15 @@ Phrase Phrase::Procreate(Phrase ParentB) {
  */
 void Phrase::mutate(int iMutationRate) {
     std::random_device rd;
-    std::mt19937 mt(rd());
     std::uniform_int_distribution<int> cDist(32, 126); // Distribution for char
     std::uniform_int_distribution<int> mDist(1, 100); // Distribution for randomRate
     std::uniform_int_distribution<int> iDist(0, iPhraseLength-1); // Distribution for index
 
-    int randomRate = mDist(mt);
+    int randomRate = mDist(rd);
 
     if(randomRate <= iMutationRate) {
-        int index = iDist(mt);
-        char mutation = static_cast<char>(cDist(mt));
+        int index = iDist(rd);
+        char mutation = static_cast<char>(cDist(rd));
         vGenes[index] = mutation;
     }
 }
