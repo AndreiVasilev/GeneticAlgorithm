@@ -18,6 +18,7 @@ class Phrase {
         std::vector<char> vGenes;
 
     public:
+        Phrase(){};
         Phrase(int);
         Phrase Procreate(Phrase);
         void SetFitness(std::string);
