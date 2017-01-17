@@ -8,9 +8,7 @@ This project is my first crack at object oriented programming. It is an implemen
 </p>
 
 <h2>How It Works</h2>
-Genetic Algorithms attempt to evolve data to reach a preferred solution that works best.
-Population Class
-Phrase Class
+Description coming soon.
 
 <h2>Runtime</h2>
-Affected by length of phrase, population size, and mutation rate.
+Description coming soon.
