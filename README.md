@@ -16,7 +16,7 @@ To begin, you must designate a target phrase that you are trying to evolve, a po
 askInput(sTarget, PopSize, MutationRate);
 Population Population1(sTarget, PopSize, MutationRate);
 ```
-Once the target phrase, population size, and mutation rate have been assigned, the initial population object is created. It is a std::vector of Phrase objects and is populated with the designated 'population size' number of Phrases. The one constraint is that all Phrase objects are and always will be the same length as the target phrase. 
+Once the target phrase, population size, and mutation rate have been assigned, the initial population object is created. It's a std::vector of Phrase objects and is populated with the designated 'population size' number of Phrases. The one constraint is that all Phrase objects are and always will be the same length as the target phrase. 
 ```sh
 Population::Population(std::string Target, int PopSize,  int MutationRate):
         sTarget(Target), iPopulationSize(PopSize),
@@ -30,7 +30,7 @@ Population::Population(std::string Target, int PopSize,  int MutationRate):
     }
 }
 ```
-When each Phrase object is created, its genes (another std::vector) are populated with randomly generated ASCII characters using a random device number generator from the \<random> header. 
+When each Phrase object is created, its genes (a std::vector) are populated with randomly generated ASCII characters using a random device number generator from the \<random> header. 
 ```sh
 Phrase::Phrase(int targetLength):
         iPhraseLength(targetLength), dFitness(0.0)
