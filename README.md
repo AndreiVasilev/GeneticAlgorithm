@@ -30,7 +30,7 @@ Population::Population(std::string Target, int PopSize,  int MutationRate):
     }
 }
 ```
-When each Phrase object is created, it's genes (another std::vector) is populated with randomly generated with ASCII characters using a random device number generator using the \<random> header.
+When each Phrase object is created, its genes (another std::vector) are populated with randomly generated ASCII characters using a random device number generator from the \<random> header. 
 ```sh
 Phrase::Phrase(int targetLength):
         iPhraseLength(targetLength), dFitness(0.0)
@@ -44,6 +44,63 @@ Phrase::Phrase(int targetLength):
     }
 }
 ```
+<h2>Step 2: Assigning Fitness Scores</h2>
+Once the intial population has been generated, the evolution process can begin. This process contains 2 main steps and will continue to carry them out until the target phrase has been reached by a member of the population. The first step consists of checking the entire population and assigning "fitness" scores to each Phrase object. 
+```sh
+    while (!Population1.PerfectScore()) {
+        Population1.AssignFitness();
+        Population1.NaturalSelection();
+        Population1.ReplacePopulation();
+        Generation++;
+    }
+```
+Fitness scores are determined by how many equivalent characters are shared between a Phrase object and the target phrase. The characters must be in the proper location to count towards fitness.
+```sh
+void Population::AssignFitness() {
+    for(auto item = vPopulation.begin(); item != vPopulation.end(); item++) {
 
-<h2>Runtime</h2>
+        (*item).SetFitness(sTarget);
 
+        if((*item).dFitness >= dHighestFitness) {
+            dHighestFitness = (*item).dFitness;
+        }
+
+        if((*item).dFitness > dHighestFitness/2) {
+            (*item).PrintGenes();
+        }
+    }
+}
+```
+While iterating through the population, the SetFitness method is called, which compares characters between the Phrase and the target and then assigns a score based on how many match. Once a score is assigned, it is exponentially adjusted. This makes it so that all fitness scores are mapped to an exponential curve. In turn, the Phrases with higher fitness scores are chosen at a exponentially higher rate when it comes time to procreate. 
+```sh
+void Phrase::SetFitness(std::string sTarget) {
+    double fitnessScore = 0;
+
+    for(int index = 0; index < iPhraseLength; index++) {
+        if(vGenes[index] == sTarget[index])
+            fitnessScore++;
+    }
+
+    dFitness = pow(fitnessScore / iPhraseLength, 20);
+
+}
+```
+<h2>Step 3: Natural Selection</h2>
+```sh
+void Population::NaturalSelection() {
+
+    for(int i = 1; i <= iPopulationSize; i++) {
+        Phrase ParentA = GrabPhrase();
+        Phrase ParentB = GrabPhrase();
+
+        while(ParentA.vGenes == ParentB.vGenes) {
+            ParentB = GrabPhrase();
+        }
+
+        Phrase Child = ParentA.Procreate(ParentB);
+        Child.mutate(iMutationRate);
+
+        vOffspring.push_back(Child);
+    }
+}
+```
