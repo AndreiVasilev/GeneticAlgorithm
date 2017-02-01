@@ -13,8 +13,8 @@ As one can imagine, this type of algorithm can be implemented in many different 
 <h2>Step 1: Input & Initial Creation</h2>
 To begin, you must designate a target phrase that you are trying to evolve, a population size, and a mutation rate. All three of these variables greatly affect program run time. If you are attempting to evolve a very long phrase with a small population and a low mutation rate, it will undoubtedly take a very long time. Choosing a larger population can increase evolution speed, but only up to a certain point. Populations greater than 1000 or so can begin to actually slow the evolution process. Increasing mutation rate on the other hand, will almost always result in a faster evolution speed.
 ```sh
-    askInput(sTarget, PopSize, MutationRate);
-    Population Population1(sTarget, PopSize, MutationRate);
+askInput(sTarget, PopSize, MutationRate);
+Population Population1(sTarget, PopSize, MutationRate);
 ```
 Once the target phrase, population size, and mutation rate have been assigned, the initial population object is created. It is a std::vector of Phrase objects and is populated with the designated 'population size' number of Phrases. The one constraint is that all Phrase objects are and always will be the same length as the target phrase. 
 ```sh
@@ -47,12 +47,12 @@ Phrase::Phrase(int targetLength):
 <h2>Step 2: Assigning Fitness Scores</h2>
 Once the intial population has been generated, the evolution process can begin. This process contains 2 main steps and will continue to carry them out until the target phrase has been reached by a member of the population. The first step consists of checking the entire population and assigning "fitness" scores to each Phrase object. 
 ```sh
-    while (!Population1.PerfectScore()) {
-        Population1.AssignFitness();
-        Population1.NaturalSelection();
-        Population1.ReplacePopulation();
-        Generation++;
-    }
+while (!Population1.PerfectScore()) {
+    Population1.AssignFitness();
+    Population1.NaturalSelection();
+    Population1.ReplacePopulation();
+    Generation++;
+}
 ```
 Fitness scores are determined by how many equivalent characters are shared between a Phrase object and the target phrase. The characters must be in the proper location to count towards fitness.
 ```sh
@@ -82,7 +82,6 @@ void Phrase::SetFitness(std::string sTarget) {
     }
 
     dFitness = pow(fitnessScore / iPhraseLength, 20);
-
 }
 ```
 <h2>Step 3: Natural Selection</h2>
