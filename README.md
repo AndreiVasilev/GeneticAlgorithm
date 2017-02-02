@@ -30,7 +30,7 @@ Population::Population(std::string Target, int PopSize,  int MutationRate):
     }
 }
 ```
-When each Phrase object is created, its genes (a std::vector) are populated with randomly generated ASCII characters using a random device number generator from the \<random> header. 
+When each Phrase object is created, its genes (a std::vector) are populated with randomly generated ASCII characters using a random number device from the \<random> header. In fact, all random number generation in this algorithm is done by using random number devices. 
 ```sh
 Phrase::Phrase(int targetLength):
         iPhraseLength(targetLength), dFitness(0.0)
@@ -54,7 +54,7 @@ while (!Population1.PerfectScore()) {
     Generation++;
 }
 ```
-Fitness scores are determined by how many equivalent characters are shared between a Phrase object and the target phrase. The characters must be in the proper location to count towards fitness.
+Fitness scores are determined by the AssignFitness() method, which checks how many equivalent characters are shared between a Phrase object and the target phrase. The characters must be in the proper location to count towards fitness. Throughout the program's runtime, this function also calls the PrintGenes() method for all Phrase objects that have a significatly high fitness rating. The Phrase's genes are then printed to STDOUT. This is what allows us to see the evolution of the phrases.
 ```sh
 void Population::AssignFitness() {
     for(auto item = vPopulation.begin(); item != vPopulation.end(); item++) {
@@ -71,7 +71,7 @@ void Population::AssignFitness() {
     }
 }
 ```
-While iterating through the population, the SetFitness method is called, which compares characters between the Phrase and the target and then assigns a score based on how many match. Once a score is assigned, it is exponentially adjusted. This makes it so that all fitness scores are mapped to an exponential curve. In turn, the Phrases with higher fitness scores are chosen at a exponentially higher rate when it comes time to procreate. 
+While iterating through the population, the SetFitness() method is called, which compares characters between the Phrase and the target and then assigns a score based on how many match. Once a score is assigned, it is exponentially adjusted. This makes it so that all fitness scores are mapped to an exponential curve. In turn, the Phrases with higher fitness scores are chosen at a exponentially higher rate when it comes time to procreate. 
 ```sh
 void Phrase::SetFitness(std::string sTarget) {
     double fitnessScore = 0;
@@ -85,6 +85,9 @@ void Phrase::SetFitness(std::string sTarget) {
 }
 ```
 <h2>Step 3: Natural Selection</h2>
+Once all Phrase objects have been assigned a fitness score, the natural selection process begins with the method call NaturalSelection(). During this process, pairs of Phrase objects are chosen as "parents" to create new child Phrase objects. The number of children created is equal to the size of the original population, and is later swapped out with the old population. This prevents the population from growing out of control and potentially crashing the program.
+<br><br>
+Along with this, for each child created the algorithm is prevented from chosing the same parent Phrase twice. Meaning that every child Phrase object has two unique parents.
 ```sh
 void Population::NaturalSelection() {
 
@@ -103,3 +106,85 @@ void Population::NaturalSelection() {
     }
 }
 ```
+Parent Phrases are grabbed from the population at random using the GrabPhrase() method. The chance of any one parent being chosen is correlated to their fitness score. A random number of type double between 0 and the highest current fitness score is generated and if that number falls below the currently selected Phrase's fitness score, then the Phrase is chosen as a parent. 
+<br><br>
+For example, if the highest fitness score is currently 0.7, and a Phrase has a fitness score of 0.1, the likelihood that the randomly generated number between 0.0 and 0.7 will fall below 0.1 is fairly low. However, if the Phrase were to have a score of 0.65, the likelihood would be quite high. Thus, Phrases with higher scores are chosen more often.
+```sh
+Phrase Population::GrabPhrase() {
+    std::random_device rd;
+    std::uniform_int_distribution<int> dist1(0, iPopulationSize-1);
+    std::uniform_real_distribution<double> dist2(0.0, dHighestFitness);
+
+    while(true) {
+        int rIndex = dist1(rd);
+        double rFitness = dist2(rd);:
+
+        Phrase Parent = vPopulation[rIndex];
+        if (rFitness < Parent.dFitness)
+            return Parent;
+    }
+}
+```
+Once two unique parent Phrase objects have been selected, a child object is created using the Procreate() method. This function takes the genes from each parent, and splices them together in a zipper fashion to create the child Phrase's genes.
+```sh
+Phrase Phrase::Procreate(Phrase ParentB) {
+    Phrase Child;
+    Child.iPhraseLength = iPhraseLength;
+    Child.vGenes.reserve(iPhraseLength);
+
+    for(int index = 0; index < iPhraseLength; index++) {
+        if(index == 0 || index % 2 == 0) {
+            Child.vGenes.push_back(vGenes[index]);
+        }
+        else {
+            Child.vGenes.push_back(ParentB.vGenes[index]);
+        }
+    }
+    return Child;
+}
+```
+Once a child Phrase object is created, the MutateChild() method is called. It uses similar logic to the GrabPhrase() method. A random number between 0 and 100 is generated and if it's below the mutation rate number originally set at the beginning of the program, the function replaces a character in the Child Phrase's genes with a random ASCII character. The character that is replaced is also randomly chosen. 
+```sh
+void Phrase::mutate(int iMutationRate) {
+    std::random_device rd;
+    std::uniform_int_distribution<int> cDist(32, 126); // Distribution for char
+    std::uniform_int_distribution<int> mDist(1, 100); // Distribution for randomRate
+    std::uniform_int_distribution<int> iDist(0, iPhraseLength-1); // Distribution for index
+
+    int randomRate = mDist(rd);
+
+    if(randomRate <= iMutationRate) {
+        int index = iDist(rd);
+        char mutation = static_cast<char>(cDist(rd));
+        vGenes[index] = mutation;
+    }
+}
+```
+Once the child population has been filled to the size of the original population, the child population is swapped with the parent population, the parent population is deleted, and the entire process starts over again.
+```sh
+void Population::ReplacePopulation() {
+    vPopulation.swap(vOffspring);
+    vOffspring.clear();
+}
+```
+<h2>Step 4: Final Evolution</h2>
+Once the algorithm has generated a sufficient number of generations, the target phrase will eventually be reached by a member of the population. How long this takes depends on the complexity and length of the phrase, the population size, and the mutation rate. After each new generation is created, the highest fitness score is checked. If the highest fitness score is equal to 1.0, that means that the target has been reached.
+```sh
+while (!Population1.PerfectScore()) {
+    Population1.AssignFitness();
+    Population1.NaturalSelection();
+    Population1.ReplacePopulation();
+    Generation++;
+}
+```
+```sh
+bool Population::PerfectScore() {
+    if (dHighestFitness == dPerfectScore)
+        return true;
+    else
+        return false;
+}
+```
+<h2>Conclusion</h2>
+This type of algorithm can be applied to various differnet situations, and this implementation is probably the simplest. The conditions that govern fitness in the real world can be very complex, whereas in this situation they are very simple. Nevertheless, I find the algorithm extremely interesting. I plan on studying it further and hopefully implementing it in more complicated ways in the future.
+
