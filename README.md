@@ -12,12 +12,12 @@ The algorithm essentially creates an artificial environment. One which contains 
 As one can imagine, this type of algorithm can be implemented in many different ways. In this specific implementation, the "organisms" are character phrases and their "genes" are the characters that they each contain. The organisms with the "best" genes are the ones with the most characters equivalent to the characters of the target phrase that we are trying to evolve. When run, the algorithm creates a population of randomly generated phrases, each of which containing completely random characters. It then repeatedly creates new generations through procreation, introducing random mutations (new characters) every so often, until the target phrase is reached by a member in the population. 
 <h2>Step 1: Input and Initial Creation</h2>
 To begin, you must designate a target phrase that you are trying to evolve, a population size, and a mutation rate. All three of these variables greatly affect program run time. If you are attempting to evolve a very long phrase with a small population and a low mutation rate, it will undoubtedly take a very long time. Choosing a larger population can increase evolution speed, but only up to a certain point. Populations greater than 1000 or so can begin to actually slow the evolution process. Increasing mutation rate on the other hand, will almost always result in a faster evolution speed.
-```sh
+```
 askInput(sTarget, PopSize, MutationRate);
 Population Population1(sTarget, PopSize, MutationRate);
 ```
 Once the target phrase, population size, and mutation rate have been assigned, the initial population object is created. It's a std::vector of Phrase objects and is populated with the designated "population size" number of Phrases. The one constraint is that all Phrase objects are and always will be the same length as the target phrase. 
-```sh
+```
 Population::Population(std::string Target, int PopSize,  int MutationRate):
         sTarget(Target), iPopulationSize(PopSize),
         iMutationRate(MutationRate), iTargetLength(Target.size())
@@ -31,7 +31,7 @@ Population::Population(std::string Target, int PopSize,  int MutationRate):
 }
 ```
 When each Phrase object is created, its genes (a std::vector) are populated with randomly generated ASCII characters using a random number device from the \<random> header. In fact, all random number generation in this algorithm is done by using random number devices. 
-```sh
+```
 Phrase::Phrase(int targetLength):
         iPhraseLength(targetLength), dFitness(0.0)
 {
@@ -46,7 +46,7 @@ Phrase::Phrase(int targetLength):
 ```
 <h2>Step 2: Assigning Fitness Scores</h2>
 Once the intial population has been generated, the evolution process can begin. This process contains 2 main steps and will continue to carry them out until the target phrase has been reached by a member of the population. The first step consists of checking the entire population and assigning "fitness" scores to each Phrase object. 
-```sh
+```
 while (!Population1.PerfectScore()) {
     Population1.AssignFitness();
     Population1.NaturalSelection();
@@ -55,7 +55,7 @@ while (!Population1.PerfectScore()) {
 }
 ```
 Fitness scores are determined by the AssignFitness() method, which checks how many equivalent characters are shared between a Phrase object and the target phrase. The characters must be in the proper location to count towards fitness. Throughout the program's runtime, this function also calls the PrintGenes() method for all Phrase objects that have a significatly high fitness rating. The Phrase's genes are then printed to STDOUT. This is what allows us to see the evolution of the phrases.
-```sh
+```
 void Population::AssignFitness() {
     for(auto item = vPopulation.begin(); item != vPopulation.end(); item++) {
 
