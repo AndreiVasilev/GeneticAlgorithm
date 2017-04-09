@@ -12,11 +12,14 @@ The algorithm essentially creates an artificial environment. One which contains 
 As one can imagine, this type of algorithm can be implemented in many different ways. In this specific implementation, the "organisms" are character phrases and their "genes" are the characters that they each contain. The organisms with the "best" genes are the ones with the most characters equivalent to the characters of the target phrase that we are trying to evolve. When run, the algorithm creates a population of randomly generated phrases, each of which containing completely random characters. It then repeatedly creates new generations through procreation, introducing random mutations (new characters) every so often, until the target phrase is reached by a member in the population. 
 <h2>Step 1: Input and Initial Creation</h2>
 To begin, you must designate a target phrase that you are trying to evolve, a population size, and a mutation rate. All three of these variables greatly affect program run time. If you are attempting to evolve a very long phrase with a small population and a low mutation rate, it will undoubtedly take a very long time. Choosing a larger population can increase evolution speed, but only up to a certain point. Populations greater than 1000 or so can begin to actually slow the evolution process. Increasing mutation rate on the other hand, will almost always result in a faster evolution speed.
+
 ```sh
 askInput(sTarget, PopSize, MutationRate);
 Population Population1(sTarget, PopSize, MutationRate);
 ```
+
 Once the target phrase, population size, and mutation rate have been assigned, the initial population object is created. It's a std::vector of Phrase objects and is populated with the designated "population size" number of Phrases. The one constraint is that all Phrase objects are and always will be the same length as the target phrase. 
+
 ```sh
 Population::Population(std::string Target, int PopSize,  int MutationRate):
         sTarget(Target), iPopulationSize(PopSize),
@@ -30,6 +33,7 @@ Population::Population(std::string Target, int PopSize,  int MutationRate):
     }
 }
 ```
+
 When each Phrase object is created, its genes (a std::vector) are populated with randomly generated ASCII characters using a random number device from the \<random> header. In fact, all random number generation in this algorithm is done by using random number devices. 
 ```sh
 Phrase::Phrase(int targetLength):
