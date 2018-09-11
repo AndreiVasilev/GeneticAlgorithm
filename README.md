@@ -3,7 +3,7 @@ This project is my first crack at object oriented programming. It is an implemen
 
 <h2>The Algorithm In Action</h2>
 <p align="left">
-  <img src="https://s12.postimg.org/468ssxbql/ezgif_com_video_to_gif.gif"/>
+  <img src="https://i.imgur.com/1ZwQnbX.gif"/>
 </p>
 
 <h2>How It Works</h2>
